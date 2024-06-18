@@ -805,12 +805,12 @@ void D3D12RaytracingInOneWeekend::OnUpdate()
 
 	// Rotate the camera around Y axis.
 	{
-		//float secondsToRotateAround = 60.0f;
-		//float angleToRotateBy = 360.0f * (elapsedTime / secondsToRotateAround);
-		//XMMATRIX rotate = XMMatrixRotationY(XMConvertToRadians(angleToRotateBy));
-		//m_eye = XMVector3Transform(m_eye, rotate);
-		//m_up = XMVector3Transform(m_up, rotate);
-		//m_at = XMVector3Transform(m_at, rotate);
+		float secondsToRotateAround = 60.0f;
+		float angleToRotateBy = 360.0f * (elapsedTime / secondsToRotateAround);
+		XMMATRIX rotate = XMMatrixRotationY(XMConvertToRadians(angleToRotateBy));
+		m_eye = XMVector3Transform(m_eye, rotate);
+		m_up = XMVector3Transform(m_up, rotate);
+		m_at = XMVector3Transform(m_at, rotate);
 		UpdateCameraMatrices();
 	}
 }
