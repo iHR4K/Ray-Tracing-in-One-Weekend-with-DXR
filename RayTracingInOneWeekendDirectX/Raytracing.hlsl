@@ -23,14 +23,12 @@ float Schlick(const float cosine, const float refractionIndex)
     return r0 + (1 - r0) * pow(1 - cosine, 5);
 }
 
-UINT LAMBERTIAN = 0;
-
 RaytracingAccelerationStructure Scene : register(t0, space0);
 RWTexture2D<float4> RenderTarget : register(u0);
 StructuredBuffer<int> Indices : register(t1, space0);
 StructuredBuffer<Vertex> Vertices : register(t2, space0);
 
-ConstantBuffer<FrameBuffer> g_frameCB : register(b0);
+ConstantBuffer<FrameBuffer> frameBuffer : register(b0);
 ConstantBuffer<MeshBuffer> meshBuffer : register(b1);
 
 typedef BuiltInTriangleIntersectionAttributes MyAttributes;
@@ -103,14 +101,6 @@ RayPayload ScatterDielectric(in float4 albedo, in float3 worldRayDirection, in f
     return payload;
 }
 
-void InitArray(inout float3 array[], int count)
-{
-    for (int i = 0; i < count; ++i)
-    {
-        array[i] = float3(0, 0, 0);
-    }
-}
-
 // Inspired with:
 // https://github.com/GPSnoopy/RayTracingInVulkan
 [shader("raygeneration")]
@@ -134,9 +124,9 @@ void MyRaygenShader()
         uv.y *= -1; // directx 
  
         float2 offset = aperture / 2 * RandomInUnitDisk(randomSeed);
-        float4 origin = mul(float4(offset, 0, 1), g_frameCB.modelViewInverse);
-        float4 target = mul((float4(uv.x, uv.y, 1, 1)), g_frameCB.projectionToWorld);
-        float4 direction = mul(float4(normalize(target.xyz * focusDistance - float3(offset, 0)), 0), g_frameCB.modelViewInverse);
+        float4 origin = mul(float4(offset, 0, 1), frameBuffer.modelViewInverse);
+        float4 target = mul((float4(uv.x, uv.y, 1, 1)), frameBuffer.projectionToWorld);
+        float4 direction = mul(float4(normalize(target.xyz * focusDistance - float3(offset, 0)), 0), frameBuffer.modelViewInverse);
        
         for (int i = 0; i <= bounces; ++i)
         {
